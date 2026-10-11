@@ -37,24 +37,43 @@
     <!-- Env (external) camera: fixed, wide view of the whole workspace. -->
     <camera name="env_cam" pos="0.75 -0.6 0.55" xyaxes="0.6 0.8 0 -0.35 0.26 0.9"/>
 
-    <!-- Graspable object: AirPods Pro (2nd gen) MagSafe charging case, modeled as a rounded
-         rectangle (flat top/bottom, rounded vertical perimeter -- a core box + 4 edge boxes +
-         4 corner cylinders, all one rigid body) instead of a sharp-edged box.
+    <!-- Graspable object: AirPods Pro (2nd gen) MagSafe charging case, modeled as a fully
+         rounded cuboid (Minkowski sum of a box with a sphere of radius 9mm -- core box + 6 face
+         slabs + 12 edge cylinders + 8 corner spheres, all one rigid body), matching the real
+         case's rounded-all-around shape (not just the vertical perimeter) rather than a sharp box.
          Official Apple dims: 60.6mm x 45.2mm x 21.7mm, 50.8g (support.apple.com/en-us/111851).
-         Resting flat on its largest face, so the 21.7mm depth is vertical. Corner radius (5mm)
-         is a visual approximation, not an Apple spec. -->
+         Resting flat on its largest face, so the 21.7mm depth is vertical. Corner/edge radius
+         (9mm) is a visual approximation matched to reference photos, not an Apple spec. -->
     <body name="airpods_case" pos="0.22 -0.15 0.01085" childclass="airpods_case">
       <freejoint name="airpods_case_free"/>
       <inertial pos="0 0 0" mass="0.0508" diaginertia="1.06e-5 1.75e-5 2.42e-5"/>
-      <geom name="airpods_case_core" size="0.0253 0.0176 0.01085"/>
-      <geom name="airpods_case_edge_xpos" size="0.0253 0.005 0.01085" pos="0 0.0176 0"/>
-      <geom name="airpods_case_edge_xneg" size="0.0253 0.005 0.01085" pos="0 -0.0176 0"/>
-      <geom name="airpods_case_edge_ypos" size="0.005 0.0176 0.01085" pos="0.0253 0 0"/>
-      <geom name="airpods_case_edge_yneg" size="0.005 0.0176 0.01085" pos="-0.0253 0 0"/>
-      <geom name="airpods_case_corner_pp" type="cylinder" size="0.005 0.01085" pos="0.0253 0.0176 0"/>
-      <geom name="airpods_case_corner_pn" type="cylinder" size="0.005 0.01085" pos="0.0253 -0.0176 0"/>
-      <geom name="airpods_case_corner_np" type="cylinder" size="0.005 0.01085" pos="-0.0253 0.0176 0"/>
-      <geom name="airpods_case_corner_nn" type="cylinder" size="0.005 0.01085" pos="-0.0253 -0.0176 0"/>
+      <geom name="airpods_case_core" type="box" size="0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_face_xpos" type="box" size="0.00450 0.01360 0.00185" pos="0.02580 0 0"/>
+      <geom name="airpods_case_face_xneg" type="box" size="0.00450 0.01360 0.00185" pos="-0.02580 0 0"/>
+      <geom name="airpods_case_face_ypos" type="box" size="0.02130 0.00450 0.00185" pos="0 0.01810 0"/>
+      <geom name="airpods_case_face_yneg" type="box" size="0.02130 0.00450 0.00185" pos="0 -0.01810 0"/>
+      <geom name="airpods_case_face_zpos" type="box" size="0.02130 0.01360 0.00450" pos="0 0 0.00635"/>
+      <geom name="airpods_case_face_zneg" type="box" size="0.02130 0.01360 0.00450" pos="0 0 -0.00635"/>
+      <geom name="airpods_case_edge_xpp" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 0.00185 0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_edge_xpn" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 -0.00185 0.02130 0.01360 -0.00185"/>
+      <geom name="airpods_case_edge_xnp" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 0.00185 0.02130 -0.01360 0.00185"/>
+      <geom name="airpods_case_edge_xnn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 0.02130 -0.01360 -0.00185"/>
+      <geom name="airpods_case_edge_ypp" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 0.00185 0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_edge_ypn" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 -0.00185 0.02130 0.01360 -0.00185"/>
+      <geom name="airpods_case_edge_ynp" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 0.00185 -0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_edge_ynn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 -0.02130 0.01360 -0.00185"/>
+      <geom name="airpods_case_edge_zpp" type="cylinder" size="0.00900" fromto="0.02130 0.01360 -0.00185 0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_edge_zpn" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 -0.00185 0.02130 -0.01360 0.00185"/>
+      <geom name="airpods_case_edge_znp" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 -0.00185 -0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_edge_znn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 -0.02130 -0.01360 0.00185"/>
+      <geom name="airpods_case_corner_ppp" type="sphere" size="0.00900" pos="0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_corner_ppn" type="sphere" size="0.00900" pos="0.02130 0.01360 -0.00185"/>
+      <geom name="airpods_case_corner_pnp" type="sphere" size="0.00900" pos="0.02130 -0.01360 0.00185"/>
+      <geom name="airpods_case_corner_pnn" type="sphere" size="0.00900" pos="0.02130 -0.01360 -0.00185"/>
+      <geom name="airpods_case_corner_npp" type="sphere" size="0.00900" pos="-0.02130 0.01360 0.00185"/>
+      <geom name="airpods_case_corner_npn" type="sphere" size="0.00900" pos="-0.02130 0.01360 -0.00185"/>
+      <geom name="airpods_case_corner_nnp" type="sphere" size="0.00900" pos="-0.02130 -0.01360 0.00185"/>
+      <geom name="airpods_case_corner_nnn" type="sphere" size="0.00900" pos="-0.02130 -0.01360 -0.00185"/>
     </body>
 
     <!-- Target placement zone (visual only, no collision). -->
