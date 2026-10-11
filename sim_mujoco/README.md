@@ -13,9 +13,12 @@ Newton (GPU MuJoCo backend) on the RTX 2070 Super box.
       [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)'s `trs_so_arm100`)
 - [x] Table + graspable object + target zone scene, physics-stable, resting on the floor (not
       floating/clipped through it — fixed an early bug where the floor and tabletop were coplanar)
-- [x] Graspable object is a box modeled on a real AirPods Pro (2nd gen) MagSafe case —
-      60.6 x 45.2 x 21.7mm, 50.8g, dimensions and mass from
-      [Apple's official tech specs](https://support.apple.com/en-us/111851), not estimated
+- [x] Graspable object is a rounded rectangle modeled on a real AirPods Pro (2nd gen) MagSafe
+      case — 60.6 x 45.2 x 21.7mm, 50.8g, dimensions and mass from
+      [Apple's official tech specs](https://support.apple.com/en-us/111851), not estimated.
+      Built as a compound body (core box + edge boxes + corner cylinders) so the vertical
+      perimeter is actually curved, not a sharp-edged box; corner radius (5mm) is a visual
+      approximation, not an Apple spec
 - [x] Minimal Python env wrapper (`envs/so100_pick_place.py`) with reset/step/observation
 - [x] Collision geometry verified: visual/collision mesh alignment, passive stability, self-collision
       sweep across full joint range, and a functional grasp-and-lift contact test (grasping and
