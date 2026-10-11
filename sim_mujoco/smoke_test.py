@@ -18,7 +18,7 @@ def main():
     print("[smoke_test] loaded scene OK")
     print(f"[smoke_test] joints: {JOINT_NAMES}")
     print(f"[smoke_test] initial qpos: {obs['qpos']}")
-    print(f"[smoke_test] initial cube_pos: {obs['cube_pos']}")
+    print(f"[smoke_test] initial object_pos: {obs['object_pos']}")
 
     home_action = np.array([0, -1.57, 1.57, 1.57, -1.57, 0])
     for i in range(200):
@@ -26,7 +26,7 @@ def main():
 
     print(f"[smoke_test] after 200 steps holding home pose:")
     print(f"[smoke_test]   qpos: {obs['qpos']}")
-    print(f"[smoke_test]   cube_pos: {obs['cube_pos']} (should still be resting on table)")
+    print(f"[smoke_test]   object_pos: {obs['object_pos']} (should still be resting on table)")
     print(f"[smoke_test]   dist_to_target: {info['dist_to_target']:.3f}, success: {success}")
     print("[smoke_test] PASS: physics stepped without errors")
 

@@ -1,7 +1,7 @@
 """Minimal SO-100 pick-and-place MuJoCo environment.
 
 No robosuite/LIBERO dependency yet -- this is the raw MuJoCo scaffold
-(arm + table + cube) that a robosuite RobotModel/task wrapper can be
+(arm + table + salt shaker) that a robosuite RobotModel/task wrapper can be
 built on top of later. See sim_mujoco/README.md for status and next steps.
 """
 
@@ -14,6 +14,10 @@ SCENE_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "so100", "s
 
 JOINT_NAMES = ["Rotation", "Pitch", "Elbow", "Wrist_Pitch", "Wrist_Roll", "Jaw"]
 
+# Object resting height (half the cylinder height, 3in/2 in meters) + tolerance for "placed" success.
+OBJECT_RESTING_Z = 0.0381
+SUCCESS_Z_THRESHOLD = OBJECT_RESTING_Z + 0.012
+
 
 class SO100PickPlaceEnv:
     """Simple joint-position-controlled pick-and-place task for the SO-100 arm."""
@@ -22,7 +26,7 @@ class SO100PickPlaceEnv:
         self.model = mujoco.MjModel.from_xml_path(scene_path)
         self.data = mujoco.MjData(self.model)
 
-        self.cube_body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "cube")
+        self.object_body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "salt_shaker")
         self.actuator_ids = np.array(
             [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, name) for name in JOINT_NAMES]
         )
@@ -42,10 +46,10 @@ class SO100PickPlaceEnv:
             mujoco.mj_step(self.model, self.data)
 
         obs = self._get_obs()
-        cube_xy = obs["cube_pos"][:2]
-        cube_z = obs["cube_pos"][2]
-        dist_to_target = float(np.linalg.norm(cube_xy - self.target_xy))
-        success = dist_to_target < 0.05 and cube_z < 0.03
+        object_xy = obs["object_pos"][:2]
+        object_z = obs["object_pos"][2]
+        dist_to_target = float(np.linalg.norm(object_xy - self.target_xy))
+        success = dist_to_target < 0.05 and object_z < SUCCESS_Z_THRESHOLD
         reward = -dist_to_target
         return obs, reward, success, {"dist_to_target": dist_to_target}
 
@@ -53,6 +57,6 @@ class SO100PickPlaceEnv:
         return {
             "qpos": self.data.qpos[: len(JOINT_NAMES)].copy(),
             "qvel": self.data.qvel[: len(JOINT_NAMES)].copy(),
-            "cube_pos": self.data.xpos[self.cube_body_id].copy(),
-            "cube_quat": self.data.xquat[self.cube_body_id].copy(),
+            "object_pos": self.data.xpos[self.object_body_id].copy(),
+            "object_quat": self.data.xquat[self.object_body_id].copy(),
         }
