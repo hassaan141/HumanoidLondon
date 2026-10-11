@@ -21,7 +21,8 @@
 
   <worldbody>
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
-    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+    <!-- Floor sits one table-height (0.4m) below the tabletop, which is at z=0 where the arm is mounted. -->
+    <geom name="floor" pos="0 0 -0.4" size="0 0 0.05" type="plane" material="groundplane"/>
 
     <!-- Tabletop surface sits at z=0 so the arm (mounted at world origin) stands on it. -->
     <geom name="table_top" type="box" pos="0.2 0 -0.02" size="0.35 0.45 0.02" material="tabletop"/>

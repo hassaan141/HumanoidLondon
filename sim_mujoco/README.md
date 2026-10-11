@@ -11,8 +11,12 @@ Newton (GPU MuJoCo backend) on the RTX 2070 Super box.
 
 - [x] SO-100 arm model loads, steps, holds pose under gravity (vendored from
       [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)'s `trs_so_arm100`)
-- [x] Table + graspable cube + target zone scene, physics-stable
+- [x] Table + graspable cube + target zone scene, physics-stable, resting on the floor (not
+      floating/clipped through it — fixed an early bug where the floor and tabletop were coplanar)
 - [x] Minimal Python env wrapper (`envs/so100_pick_place.py`) with reset/step/observation
+- [x] Collision geometry verified: visual/collision mesh alignment, passive stability, self-collision
+      sweep across full joint range, and a functional grasp-and-lift contact test all pass — see
+      `verify_collisions.py` and `verification/` below
 - [ ] robosuite `RobotModel`/gripper class wrapper (so LIBERO's task scaffolding, controllers,
       and renderer can drive this robot the same way it drives Panda) — **not done yet**
 - [ ] Camera matching the planned phone-video fixed viewpoint
@@ -31,8 +35,27 @@ sim_mujoco/
   envs/
     so100_pick_place.py    # SO100PickPlaceEnv: reset()/step(action)/_get_obs()
   smoke_test.py             # loads the scene, steps it, prints state — sanity check
+  verify_collisions.py      # mesh/collision alignment, stability, self-collision, grasp test
+  verification/             # output images from verify_collisions.py
   requirements.txt
 ```
+
+## Collision verification
+
+Run `python sim_mujoco/verify_collisions.py` to check:
+
+1. Collision mesh vs. visual mesh alignment (renders both for comparison in `verification/`)
+2. Passive stability under gravity with no control
+3. Self-collision across 2000 random full-range joint configs — some self-contact at extreme
+   folded poses is expected and physically real for this arm, not a modeling bug; what matters is
+   the solver resolves it cleanly instead of exploding, which it does
+4. A functional grasp-and-lift test — places the cube between the jaws, closes the gripper, lifts
+   it, and checks the cube actually rises with the gripper instead of clipping through or flying off
+
+This matters because the earlier Isaac Lab/USD pipeline (in the old `sim2real` repo) needed a
+manual collision fix-up script after URDF→USD conversion. The Menagerie MJCF used here is
+purpose-built for MuJoCo with pre-decomposed gripper collision meshes and dedicated contact pads,
+and the checks above confirm it doesn't have that problem.
 
 ## Why MuJoCo over Isaac Lab for this piece
 
