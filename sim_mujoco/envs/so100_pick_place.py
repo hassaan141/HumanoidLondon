@@ -1,7 +1,7 @@
 """Minimal SO-100 pick-and-place MuJoCo environment.
 
 No robosuite/LIBERO dependency yet -- this is the raw MuJoCo scaffold
-(arm + table + salt shaker) that a robosuite RobotModel/task wrapper can be
+(arm + table + AirPods Pro case) that a robosuite RobotModel/task wrapper can be
 built on top of later. See sim_mujoco/README.md for status and next steps.
 """
 
@@ -14,8 +14,8 @@ SCENE_PATH = os.path.join(os.path.dirname(__file__), "..", "assets", "so100", "s
 
 JOINT_NAMES = ["Rotation", "Pitch", "Elbow", "Wrist_Pitch", "Wrist_Roll", "Jaw"]
 
-# Object resting height (half the cylinder height, 3in/2 in meters) + tolerance for "placed" success.
-OBJECT_RESTING_Z = 0.0381
+# Object resting height (half the case's 21.7mm depth, resting flat) + tolerance for "placed" success.
+OBJECT_RESTING_Z = 0.01085
 SUCCESS_Z_THRESHOLD = OBJECT_RESTING_Z + 0.012
 
 
@@ -26,7 +26,7 @@ class SO100PickPlaceEnv:
         self.model = mujoco.MjModel.from_xml_path(scene_path)
         self.data = mujoco.MjData(self.model)
 
-        self.object_body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "salt_shaker")
+        self.object_body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, "airpods_case")
         self.actuator_ids = np.array(
             [mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_ACTUATOR, name) for name in JOINT_NAMES]
         )

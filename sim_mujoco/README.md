@@ -13,13 +13,13 @@ Newton (GPU MuJoCo backend) on the RTX 2070 Super box.
       [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)'s `trs_so_arm100`)
 - [x] Table + graspable object + target zone scene, physics-stable, resting on the floor (not
       floating/clipped through it — fixed an early bug where the floor and tabletop were coplanar)
-- [x] Graspable object is a cylinder modeled on a real salt shaker (2in diameter x 3in tall) —
-      swapped from the earlier placeholder cube; mass (50g) is still a placeholder, update once
-      you weigh the real one
+- [x] Graspable object is a box modeled on a real AirPods Pro (2nd gen) MagSafe case —
+      60.6 x 45.2 x 21.7mm, 50.8g, dimensions and mass from
+      [Apple's official tech specs](https://support.apple.com/en-us/111851), not estimated
 - [x] Minimal Python env wrapper (`envs/so100_pick_place.py`) with reset/step/observation
 - [x] Collision geometry verified: visual/collision mesh alignment, passive stability, self-collision
       sweep across full joint range, and a functional grasp-and-lift contact test (grasping and
-      lifting the salt shaker) all pass — see `verify_collisions.py` and `verification/` below
+      lifting the AirPods case) all pass — see `verify_collisions.py` and `verification/` below
 - [ ] robosuite `RobotModel`/gripper class wrapper (so LIBERO's task scaffolding, controllers,
       and renderer can drive this robot the same way it drives Panda) — **not done yet**
 - [ ] Camera matching the planned phone-video fixed viewpoint
@@ -33,7 +33,7 @@ sim_mujoco/
   assets/so100/
     so_arm100.xml          # vendored, unmodified MJCF from MuJoCo Menagerie
     assets/*.stl           # robot meshes
-    scene_pick_place.xml   # our scene: so_arm100 + table + cube + target zone + camera
+    scene_pick_place.xml   # our scene: so_arm100 + table + AirPods case + target zone + camera
     LICENSE, UPSTREAM_README.md   # menagerie's original license/readme (Apache-2.0, see file)
   envs/
     so100_pick_place.py    # SO100PickPlaceEnv: reset()/step(action)/_get_obs()
@@ -96,8 +96,8 @@ physical joints).
 
 1. Wrap `assets/so100/so_arm100.xml` as a robosuite `RobotModel` (+ gripper class for the Jaw) so
    it can be registered and driven inside robosuite/LIBERO's task and controller framework.
-2. Replace the placeholder object/target positions and mass with your actual measured tabletop
-   dimensions and the salt shaker's real weight.
+2. Replace the placeholder object/target table positions with your actual measured tabletop
+   dimensions (the AirPods case's own dimensions/mass are now accurate, from Apple's spec sheet).
 3. Add the gripper-mounted + external camera views (same two-camera pattern as the Isaac Lab
    setup) so sim rollouts produce the same observation shape as the real phone-video pipeline.
 4. Hook in MuGS for the environment background once the task geometry is finalized.

@@ -15,7 +15,7 @@
       markrgb="0.8 0.8 0.8" width="300" height="300"/>
     <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
     <material name="tabletop" rgba="0.55 0.4 0.28 1"/>
-    <material name="shaker" rgba="0.9 0.9 0.92 1"/>
+    <material name="case" rgba="0.95 0.95 0.96 1"/>
     <material name="target" rgba="0.1 0.7 0.2 0.3"/>
   </asset>
 
@@ -31,12 +31,13 @@
     <!-- Env (external) camera: fixed, wide view of the whole workspace. -->
     <camera name="env_cam" pos="0.75 -0.6 0.55" xyaxes="0.6 0.8 0 -0.35 0.26 0.9"/>
 
-    <!-- Graspable object: salt shaker, modeled as a cylinder (2in diameter x 3in tall =
-         0.0508m x 0.0762m). Mass is a placeholder (50g) -- update once you weigh the real one. -->
-    <body name="salt_shaker" pos="0.22 -0.15 0.0381">
-      <freejoint name="salt_shaker_free"/>
-      <inertial pos="0 0 0" mass="0.05" diaginertia="3.23e-5 3.23e-5 1.61e-5"/>
-      <geom name="salt_shaker_geom" type="cylinder" size="0.0254 0.0381" material="shaker"
+    <!-- Graspable object: AirPods Pro (2nd gen) MagSafe charging case, modeled as a box.
+         Official Apple dims: 60.6mm x 45.2mm x 21.7mm, 50.8g (support.apple.com/en-us/111851).
+         Resting flat on its largest face, so the 21.7mm depth is vertical. -->
+    <body name="airpods_case" pos="0.22 -0.15 0.01085">
+      <freejoint name="airpods_case_free"/>
+      <inertial pos="0 0 0" mass="0.0508" diaginertia="1.06e-5 1.75e-5 2.42e-5"/>
+      <geom name="airpods_case_geom" type="box" size="0.0303 0.0226 0.01085" material="case"
         friction="1 0.005 0.0001" condim="4" solimp="2 1 0.01" solref="0.01 1"/>
     </body>
 
@@ -46,7 +47,7 @@
   </worldbody>
 
   <keyframe>
-    <key name="home_with_shaker" qpos="0 -1.57 1.57 1.57 -1.57 0 0.22 -0.15 0.0381 1 0 0 0"
+    <key name="home_with_case" qpos="0 -1.57 1.57 1.57 -1.57 0 0.22 -0.15 0.01085 1 0 0 0"
       ctrl="0 -1.57 1.57 1.57 -1.57 0"/>
   </keyframe>
 </mujoco>
