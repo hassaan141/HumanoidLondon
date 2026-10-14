@@ -88,15 +88,17 @@ macOS build. This `sim_mujoco/` directory is the Mac-native path, and lines up w
 for the current table/object dimensions. What's matched and what's still assumed:
 
 - **Matched**: table footprint (40cm x 50cm, white), shaker dimensions (1.5in dia x 3in tall,
-  black body / white cap).
-- **Assumed, not measured**: where exactly the robot's base sits on the real desk relative to the
-  workspace_marked.jpg red-tape zone (the sim places it 5cm inside one edge, centered); table
-  thickness/height off the floor; the shaker's actual mass; the object's/target's X-Y position on
-  the table (currently arbitrary points within the footprint, not matched to where you'll actually
-  place the shaker when recording).
-- The red-tape zone in `workspace_marked.jpg` isn't numerically measured yet — if you measure its
-  actual width/height and its offset from a table edge, send that over and the table/object
-  placement in `scene_pick_place.xml` can be made exact instead of assumed.
+  black body / white cap), robot base position.
+- **Robot base placement**: flush with the midpoint of one 50cm edge (x=0, centered in y) —
+  derived from the measured centerline (50cm length split 25/25) and the 28cm offset line from
+  that edge. In the 4-corner-dot calibration frame (dots placed 2in/5.08cm in from each table
+  corner; origin at the table corner, x:[0,40cm] width, y:[0,50cm] length), this is
+  **robot base = (x=0, y=25cm)**. The 4 dots themselves sit at (5.08, 5.08), (34.92, 5.08),
+  (5.08, 44.92), (34.92, 44.92) in that frame.
+- **Still assumed, not measured**: table thickness/height off the floor; the shaker's actual mass
+  (35g placeholder); the object's/target's exact X-Y position on the table (currently arbitrary
+  points within the footprint, not matched to where you'll actually place the shaker when
+  recording — update these once you've picked your real start/target spots).
 
 ## Running
 

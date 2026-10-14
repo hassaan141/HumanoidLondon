@@ -26,11 +26,14 @@
     <geom name="floor" pos="0 0 -0.4" size="0 0 0.05" type="plane" material="groundplane"/>
 
     <!-- Tabletop surface sits at z=0 so the arm (mounted at world origin) stands on it.
-         Measured real desk: 40cm x 50cm white table (IMG_0351/IMG_3494). Table is positioned
-         so the arm (at x=0,y=0) sits ~5cm inside the near edge, matching where the arm would
-         be mounted relative to the real desk. Thickness (4cm) is an unmeasured placeholder. -->
-    <geom name="table_top" type="box" pos="0.15 0 -0.02" size="0.20 0.25 0.02" material="tabletop"/>
-    <geom name="table_leg" type="box" pos="0.15 0 -0.21" size="0.05 0.05 0.19" material="tabletop"/>
+         Measured real desk: 40cm x 50cm white table (IMG_0351/IMG_3494). Robot base is flush
+         with the midpoint of one 50cm edge (x=0, centered in y), matching the real measured
+         setup: table spans x:[0,0.40] (width), y:[-0.25,0.25] (length, centered on the arm).
+         In the 4-corner-dot coordinate frame (origin at the table corner, x:[0,40cm] width,
+         y:[0,50cm] length), this is robot base = (x=0, y=25cm) -- flush left edge, length
+         midpoint. Thickness (4cm) is an unmeasured placeholder. -->
+    <geom name="table_top" type="box" pos="0.20 0 -0.02" size="0.20 0.25 0.02" material="tabletop"/>
+    <geom name="table_leg" type="box" pos="0.20 0 -0.21" size="0.05 0.05 0.19" material="tabletop"/>
 
     <!-- Env (external) camera: fixed, wide view of the whole workspace. -->
     <camera name="env_cam" pos="0.75 -0.6 0.55" xyaxes="0.6 0.8 0 -0.35 0.26 0.9"/>
