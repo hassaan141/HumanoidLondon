@@ -11,24 +11,22 @@ Newton (GPU MuJoCo backend) on the RTX 2070 Super box.
 
 - [x] SO-100 arm model loads, steps, holds pose under gravity (vendored from
       [MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)'s `trs_so_arm100`)
+- [x] Table matches the real measured desk: 40cm x 50cm, white — from `reference_photos/` (see
+      below). Table thickness (4cm) is still an unmeasured placeholder.
+- [x] Graspable object matches the real pepper shaker (McCormick tin) in the reference photos:
+      1.5in diameter x 3in tall, black body with a white cap, modeled as two stacked cylinders.
+      Mass (35g) is an unweighed placeholder — update once you weigh the real one.
 - [x] Table + graspable object + target zone scene, physics-stable, resting on the floor (not
       floating/clipped through it — fixed an early bug where the floor and tabletop were coplanar)
-- [x] Graspable object is a fully rounded cuboid modeled on a real AirPods Pro (2nd gen) MagSafe
-      case — 60.6 x 45.2 x 21.7mm, 50.8g, dimensions and mass from
-      [Apple's official tech specs](https://support.apple.com/en-us/111851), not estimated.
-      Built as a 27-primitive compound body (Minkowski sum of a box with a sphere: core box + 6
-      face slabs + 12 edge cylinders + 8 corner spheres) so it's rounded all around — matching
-      reference photos' stadium-like cross-section — not just a sharp box or vertical-only
-      rounding; the 9mm edge/corner radius is a visual approximation, not an Apple spec
 - [x] Minimal Python env wrapper (`envs/so100_pick_place.py`) with reset/step/observation
 - [x] Collision geometry verified: visual/collision mesh alignment, passive stability, self-collision
       sweep across full joint range, and a functional grasp-and-lift contact test (grasping and
-      lifting the AirPods case) all pass — see `verify_collisions.py` and `verification/` below
+      lifting the shaker) all pass — see `verify_collisions.py` and `verification/` below
 - [ ] robosuite `RobotModel`/gripper class wrapper (so LIBERO's task scaffolding, controllers,
       and renderer can drive this robot the same way it drives Panda) — **not done yet**
 - [ ] Camera matching the planned phone-video fixed viewpoint
-- [ ] Workspace dimensions matched to measured real tabletop (cube/target positions below are
-      placeholders, not measured)
+- [ ] Object/target X-Y position within the table and table thickness are still rough placeholders
+      — only the table's overall footprint and the object's own dimensions are measured so far
 
 ## Layout
 
@@ -37,13 +35,14 @@ sim_mujoco/
   assets/so100/
     so_arm100.xml          # vendored, unmodified MJCF from MuJoCo Menagerie
     assets/*.stl           # robot meshes
-    scene_pick_place.xml   # our scene: so_arm100 + table + AirPods case + target zone + camera
+    scene_pick_place.xml   # our scene: so_arm100 + table + shaker + target zone + camera
     LICENSE, UPSTREAM_README.md   # menagerie's original license/readme (Apache-2.0, see file)
   envs/
     so100_pick_place.py    # SO100PickPlaceEnv: reset()/step(action)/_get_obs()
   smoke_test.py             # loads the scene, steps it, prints state — sanity check
   verify_collisions.py      # mesh/collision alignment, stability, self-collision, grasp test
   verification/             # output images from verify_collisions.py
+  reference_photos/         # real desk + shaker photos the scene is matched against
   requirements.txt
 ```
 
@@ -82,6 +81,22 @@ The `sim/` directory (Isaac Lab) at the repo root has more mature tooling (domai
 LeRobot dataset recording, tuned SO-100 physics) but **cannot run on this Mac** — Isaac Sim has no
 macOS build. This `sim_mujoco/` directory is the Mac-native path, and lines up with using LIBERO
 (built on robosuite/MuJoCo) and MuGS (built on MuJoCo) for the reviewer-facing benchmark story.
+
+## Matching the real workspace
+
+`reference_photos/desk_and_shaker.jpg` and `reference_photos/workspace_marked.jpg` are the source
+for the current table/object dimensions. What's matched and what's still assumed:
+
+- **Matched**: table footprint (40cm x 50cm, white), shaker dimensions (1.5in dia x 3in tall,
+  black body / white cap).
+- **Assumed, not measured**: where exactly the robot's base sits on the real desk relative to the
+  workspace_marked.jpg red-tape zone (the sim places it 5cm inside one edge, centered); table
+  thickness/height off the floor; the shaker's actual mass; the object's/target's X-Y position on
+  the table (currently arbitrary points within the footprint, not matched to where you'll actually
+  place the shaker when recording).
+- The red-tape zone in `workspace_marked.jpg` isn't numerically measured yet — if you measure its
+  actual width/height and its offset from a table edge, send that over and the table/object
+  placement in `scene_pick_place.xml` can be made exact instead of assumed.
 
 ## Running
 

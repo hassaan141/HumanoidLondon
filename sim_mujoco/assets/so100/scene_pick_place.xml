@@ -14,66 +14,38 @@
     <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3"
       markrgb="0.8 0.8 0.8" width="300" height="300"/>
     <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
-    <material name="tabletop" rgba="0.55 0.4 0.28 1"/>
-    <material name="case" rgba="0.95 0.95 0.96 1"/>
+    <material name="tabletop" rgba="0.92 0.92 0.93 1"/>
+    <material name="shaker_body" rgba="0.08 0.08 0.08 1"/>
+    <material name="shaker_cap" rgba="0.95 0.95 0.95 1"/>
     <material name="target" rgba="0.1 0.7 0.2 0.3"/>
   </asset>
-
-  <default>
-    <default class="airpods_case">
-      <geom type="box" material="case" friction="1 0.005 0.0001" condim="4" solimp="2 1 0.01" solref="0.01 1"/>
-    </default>
-  </default>
 
   <worldbody>
     <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
     <!-- Floor sits one table-height (0.4m) below the tabletop, which is at z=0 where the arm is mounted. -->
     <geom name="floor" pos="0 0 -0.4" size="0 0 0.05" type="plane" material="groundplane"/>
 
-    <!-- Tabletop surface sits at z=0 so the arm (mounted at world origin) stands on it. -->
-    <geom name="table_top" type="box" pos="0.2 0 -0.02" size="0.35 0.45 0.02" material="tabletop"/>
-    <geom name="table_leg" type="box" pos="0.2 0 -0.21" size="0.05 0.05 0.19" material="tabletop"/>
+    <!-- Tabletop surface sits at z=0 so the arm (mounted at world origin) stands on it.
+         Measured real desk: 40cm x 50cm white table (IMG_0351/IMG_3494). Table is positioned
+         so the arm (at x=0,y=0) sits ~5cm inside the near edge, matching where the arm would
+         be mounted relative to the real desk. Thickness (4cm) is an unmeasured placeholder. -->
+    <geom name="table_top" type="box" pos="0.15 0 -0.02" size="0.20 0.25 0.02" material="tabletop"/>
+    <geom name="table_leg" type="box" pos="0.15 0 -0.21" size="0.05 0.05 0.19" material="tabletop"/>
 
     <!-- Env (external) camera: fixed, wide view of the whole workspace. -->
     <camera name="env_cam" pos="0.75 -0.6 0.55" xyaxes="0.6 0.8 0 -0.35 0.26 0.9"/>
 
-    <!-- Graspable object: AirPods Pro (2nd gen) MagSafe charging case, modeled as a fully
-         rounded cuboid (Minkowski sum of a box with a sphere of radius 9mm -- core box + 6 face
-         slabs + 12 edge cylinders + 8 corner spheres, all one rigid body), matching the real
-         case's rounded-all-around shape (not just the vertical perimeter) rather than a sharp box.
-         Official Apple dims: 60.6mm x 45.2mm x 21.7mm, 50.8g (support.apple.com/en-us/111851).
-         Resting flat on its largest face, so the 21.7mm depth is vertical. Corner/edge radius
-         (9mm) is a visual approximation matched to reference photos, not an Apple spec. -->
-    <body name="airpods_case" pos="0.22 -0.15 0.01085" childclass="airpods_case">
-      <freejoint name="airpods_case_free"/>
-      <inertial pos="0 0 0" mass="0.0508" diaginertia="1.06e-5 1.75e-5 2.42e-5"/>
-      <geom name="airpods_case_core" type="box" size="0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_face_xpos" type="box" size="0.00450 0.01360 0.00185" pos="0.02580 0 0"/>
-      <geom name="airpods_case_face_xneg" type="box" size="0.00450 0.01360 0.00185" pos="-0.02580 0 0"/>
-      <geom name="airpods_case_face_ypos" type="box" size="0.02130 0.00450 0.00185" pos="0 0.01810 0"/>
-      <geom name="airpods_case_face_yneg" type="box" size="0.02130 0.00450 0.00185" pos="0 -0.01810 0"/>
-      <geom name="airpods_case_face_zpos" type="box" size="0.02130 0.01360 0.00450" pos="0 0 0.00635"/>
-      <geom name="airpods_case_face_zneg" type="box" size="0.02130 0.01360 0.00450" pos="0 0 -0.00635"/>
-      <geom name="airpods_case_edge_xpp" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 0.00185 0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_edge_xpn" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 -0.00185 0.02130 0.01360 -0.00185"/>
-      <geom name="airpods_case_edge_xnp" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 0.00185 0.02130 -0.01360 0.00185"/>
-      <geom name="airpods_case_edge_xnn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 0.02130 -0.01360 -0.00185"/>
-      <geom name="airpods_case_edge_ypp" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 0.00185 0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_edge_ypn" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 -0.00185 0.02130 0.01360 -0.00185"/>
-      <geom name="airpods_case_edge_ynp" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 0.00185 -0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_edge_ynn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 -0.02130 0.01360 -0.00185"/>
-      <geom name="airpods_case_edge_zpp" type="cylinder" size="0.00900" fromto="0.02130 0.01360 -0.00185 0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_edge_zpn" type="cylinder" size="0.00900" fromto="0.02130 -0.01360 -0.00185 0.02130 -0.01360 0.00185"/>
-      <geom name="airpods_case_edge_znp" type="cylinder" size="0.00900" fromto="-0.02130 0.01360 -0.00185 -0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_edge_znn" type="cylinder" size="0.00900" fromto="-0.02130 -0.01360 -0.00185 -0.02130 -0.01360 0.00185"/>
-      <geom name="airpods_case_corner_ppp" type="sphere" size="0.00900" pos="0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_corner_ppn" type="sphere" size="0.00900" pos="0.02130 0.01360 -0.00185"/>
-      <geom name="airpods_case_corner_pnp" type="sphere" size="0.00900" pos="0.02130 -0.01360 0.00185"/>
-      <geom name="airpods_case_corner_pnn" type="sphere" size="0.00900" pos="0.02130 -0.01360 -0.00185"/>
-      <geom name="airpods_case_corner_npp" type="sphere" size="0.00900" pos="-0.02130 0.01360 0.00185"/>
-      <geom name="airpods_case_corner_npn" type="sphere" size="0.00900" pos="-0.02130 0.01360 -0.00185"/>
-      <geom name="airpods_case_corner_nnp" type="sphere" size="0.00900" pos="-0.02130 -0.01360 0.00185"/>
-      <geom name="airpods_case_corner_nnn" type="sphere" size="0.00900" pos="-0.02130 -0.01360 -0.00185"/>
+    <!-- Graspable object: real black pepper shaker (McCormick tin) from IMG_0351/IMG_3494.
+         User-measured dims: 3in tall x 1.5in diameter (0.0762m x 0.0381m), black body with a
+         white perforated cap (~20% of height). Mass (35g) is an unweighed placeholder -- update
+         once you weigh the real one. Modeled as two stacked cylinders, same radius. -->
+    <body name="shaker" pos="0.22 -0.15 0.0381">
+      <freejoint name="shaker_free"/>
+      <inertial pos="0 0 0" mass="0.035" diaginertia="2.011e-5 2.011e-5 6.351e-6"/>
+      <geom name="shaker_body" type="cylinder" size="0.01905 0.0305" pos="0 0 -0.0076" material="shaker_body"
+        friction="1 0.005 0.0001" condim="4" solimp="2 1 0.01" solref="0.01 1"/>
+      <geom name="shaker_cap" type="cylinder" size="0.01905 0.0076" pos="0 0 0.0305" material="shaker_cap"
+        friction="1 0.005 0.0001" condim="4" solimp="2 1 0.01" solref="0.01 1"/>
     </body>
 
     <!-- Target placement zone (visual only, no collision). -->
@@ -82,7 +54,7 @@
   </worldbody>
 
   <keyframe>
-    <key name="home_with_case" qpos="0 -1.57 1.57 1.57 -1.57 0 0.22 -0.15 0.01085 1 0 0 0"
+    <key name="home_with_shaker" qpos="0 -1.57 1.57 1.57 -1.57 0 0.22 -0.15 0.0381 1 0 0 0"
       ctrl="0 -1.57 1.57 1.57 -1.57 0"/>
   </keyframe>
 </mujoco>

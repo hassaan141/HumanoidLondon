@@ -62,7 +62,7 @@ def test_self_collision_sweep(model, data, n_samples=2000, seed=0):
             con = data.contact[c]
             n1 = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, model.geom_bodyid[con.geom1])
             n2 = mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_BODY, model.geom_bodyid[con.geom2])
-            if "world" in (n1, n2) or "airpods_case" in (n1, n2):
+            if "world" in (n1, n2) or "shaker" in (n1, n2):
                 continue
             pair = tuple(sorted((n1, n2)))
             events[pair] = events.get(pair, 0) + 1
@@ -80,7 +80,7 @@ def test_grasp_and_lift(model, data):
     """Drives the arm to a reach pose over the object's table position (found via a
     random-search 'IK' with Wrist_Roll held at -1.57 so the jaws close in a horizontal
     plane over the table, matching the built-in 'home' orientation), opens the jaw, places
-    the AirPods Pro case (60.6 x 45.2 x 21.7mm) at the settled open-jaw midpoint, closes the
+    the pepper shaker (1.5in dia x 3in tall) at the settled open-jaw midpoint, closes the
     gripper, and gently lifts, checking it stays held.
 
     Two things had to be fixed to get a real PASS here, neither of which is a mesh/collision
@@ -95,9 +95,9 @@ def test_grasp_and_lift(model, data):
        dynamic coupling; a gentle ramped lift holds it. The real trajectory controller will
        need smooth motion for the same reason.
     """
-    obj_jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, "airpods_case_free")
+    obj_jid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, "shaker_free")
     obj_qadr = model.jnt_qposadr[obj_jid]
-    obj_bid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "airpods_case")
+    obj_bid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, "shaker")
     act_ids = {n: mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_ACTUATOR, n) for n in JOINT_NAMES}
     jids = {n: mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, n) for n in JOINT_NAMES}
     qadr = {n: model.jnt_qposadr[j] for n, j in jids.items()}
@@ -109,9 +109,9 @@ def test_grasp_and_lift(model, data):
     model.actuator_forcerange[act_ids["Jaw"]] = [-10, 10]
 
     # Reach pose found by random search to bring the gripper to the object's table
-    # position (0.22, -0.15, 0.01085) with Wrist_Roll fixed at -1.57; re-derive if the
+    # position (0.22, -0.15, 0.0381) with Wrist_Roll fixed at -1.57; re-derive if the
     # scene's object position changes.
-    reach_cfg = dict(Rotation=1.2943, Pitch=-1.5284, Elbow=2.1477, Wrist_Pitch=0.4825, Wrist_Roll=-1.57)
+    reach_cfg = dict(Rotation=1.2795, Pitch=-1.3149, Elbow=1.5629, Wrist_Pitch=1.1885, Wrist_Roll=-1.57)
 
     mujoco.mj_resetData(model, data)
     for k, v in reach_cfg.items():
@@ -144,7 +144,7 @@ def test_grasp_and_lift(model, data):
     z_after = data.xpos[obj_bid][2]
 
     held = z_after > z_before + 0.015
-    print(f"[4/4] Grasp-and-lift test (AirPods Pro case): z {z_before:.3f} -> {z_after:.3f} "
+    print(f"[4/4] Grasp-and-lift test (pepper shaker): z {z_before:.3f} -> {z_after:.3f} "
           f"({'PASS: held and lifted' if held else 'FAIL: not held'})")
     return held
 
